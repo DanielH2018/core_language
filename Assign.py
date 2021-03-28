@@ -9,14 +9,27 @@ class Assign:
 		self.id.parse(parser)
 		parser.expectedToken(Core.ASSIGN)
 		parser.scanner.nextToken()
-		self.expr = Expr()
-		self.expr.parse(parser)
+		if parser.scanner.currentToken() == Core.NEW:
+			self.new = True
+			parser.scanner.nextToken()
+			self.expr = Expr()
+			self.expr.parse(parser)
+		elif parser.scanner.currentToken() == Core.DEFINE:
+			parser.scanner.nextToken()
+			self.assignId = Id()
+			self.assignId.parse(parser)
+		else:
+			self.expr = Expr()
+			self.expr.parse(parser)
 		parser.expectedToken(Core.SEMICOLON)
 		parser.scanner.nextToken()
 	
 	def semantic(self, parser):
 		self.id.semantic(parser)
-		self.expr.semantic(parser)
+		if hasattr(self, 'expr'):
+			self.expr.semantic(parser)
+		else:
+			self.assignId.semantic(parser)
 	
 	def print(self, indent):
 		for x in range(indent):
@@ -27,4 +40,9 @@ class Assign:
 		print(";\n", end='')
 
 	def execute(self, executor):
-		self.id.executeAssign(executor, self.expr.execute(executor))
+		if hasattr(self, 'assignId'):
+			self.id.executeRefAssign(self, executor)
+		elif hasattr(self, 'new'):
+			self.id.executeRefInit(self, executor)
+		else:
+			self.id.executeAssign(executor, self.expr.execute(executor))
