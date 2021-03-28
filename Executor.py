@@ -35,7 +35,7 @@ class Executor:
 		if not len(self.variables[-1]) == 0:
 			temp = self.variables[-1].pop()
 			if x in temp:
-				temp[x] = value
+					temp[x] = value
 			else:
 				self.varSet(x, value)
 			self.variables[-1].append(temp)
@@ -64,8 +64,45 @@ class Executor:
 		else:
 			self.variables[-1][-1][x] = None
 	
+	def refVarInit(self, x):
+		self.variables[-1][-1][x] = [None]
 
+	# Called with 'new'
+	def refVarSet(self, x, value):
+		if not len(self.variables[-1]) == 0:
+			temp = self.variables[-1].pop()
+			if x in temp:
+					temp[x].append(value)
+			else:
+				self.varSet(x, value)
+			self.variables[-1].append(temp)
+		else:
+			self.globalVars[x] = value	
 
+	# Called with regular assign
+	def refVarUpdate(self, x, value, index):
+		if not len(self.variables[-1]) == 0:
+			temp = self.variables[-1].pop()
+			if x in temp:
+					temp[x][index] = value
+			else:
+				self.varSet(x, value)
+			self.variables[-1].append(temp)
+		else:
+			self.globalVars[x] = value
+
+	def refVarGet(self, x, index):
+		value = None
+		if not len(self.variables[-1]) == 0:
+			temp = self.variables[-1].pop()
+			if x in temp:
+				value = else temp[x][index]
+			else:
+				value = self.varGet(x)
+			self.variables[-1].append(temp)
+		else:
+			value = self.globalVars[x]
+		return value
 
 	#
 	#

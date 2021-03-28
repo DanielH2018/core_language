@@ -48,7 +48,11 @@ class Id:
 		pass
 
 	# Initialize reference variable
-	def executeRefAssign(self, executor):
+	def executeRefUpdate(self, executor):
+		pass
+
+	# Initialize reference variable
+	def executeRefSet(self, executor):
 		pass
 
 	def getString(self):
