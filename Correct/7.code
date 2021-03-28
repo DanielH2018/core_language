@@ -1,0 +1,12 @@
+program
+	int x;
+	int y;
+begin
+	x=10;
+	y=1;
+	while y < x begin
+		define z;
+		z = new 100;
+		y = y+1;
+	endwhile
+end

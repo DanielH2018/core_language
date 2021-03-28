@@ -1,0 +1,9 @@
+program
+	int x;
+begin
+	define y;
+	define z;
+	y = new 10;
+	z = define y;
+	output z;
+end

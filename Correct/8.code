@@ -1,0 +1,15 @@
+program
+	A(r) begin 
+		if r < 1 then
+			define n;
+			r = define n;
+		else
+			r = new r-1;
+			begin A(r);
+		endif
+	endfunc
+begin
+	define r;
+	r = new 5;
+	begin A(r);
+end

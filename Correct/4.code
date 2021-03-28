@@ -1,0 +1,10 @@
+program
+	int m, n;
+	A(x) begin output x; endfunc
+begin
+	m = 10;
+	n = 5;
+	define z;
+	z = new m+n;
+	begin A(z);
+end

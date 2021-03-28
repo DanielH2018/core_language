@@ -1,0 +1,11 @@
+program
+	int x;
+begin
+	x = 1;
+	if x<100 then
+		define x;
+		x = new 10;
+		output x;
+	endif
+	output x;
+end

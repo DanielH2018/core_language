@@ -1,0 +1,6 @@
+program
+	A(r) begin output r; endfunc
+	int x;
+begin
+	define x = new 10;
+end

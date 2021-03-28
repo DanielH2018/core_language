@@ -1,0 +1,7 @@
+program
+	int x;
+begin
+	define y;
+	x = 10;
+	output x;
+end
