@@ -5,6 +5,7 @@ from If import If
 from Loop import Loop
 from Decl import Decl
 from FuncCall import FuncCall
+from NewDecl import NewDecl
 from Core import Core
 import sys
 
@@ -25,6 +26,8 @@ class StmtSeq:
 			self.stmt = Decl()
 		elif parser.scanner.currentToken() == Core.BEGIN:
 			self.stmt = FuncCall()
+		elif parser.scanner.currentToken() == Core.BEGIN:
+			self.stmt = NewDecl()
 		else:
 			print("ERROR: Bad start to statement: " + parser.scanner.currentToken().name + "\n", end='')
 			sys.exit()
