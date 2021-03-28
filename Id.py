@@ -43,5 +43,13 @@ class Id:
 			sys.exit()
 		return value
 
+	# Point self to reference variable
+	def executeRefInit(self, executor):
+		pass
+
+	# Initialize reference variable
+	def executeRefAssign(self, executor):
+		pass
+
 	def getString(self):
 		return self.identifier
