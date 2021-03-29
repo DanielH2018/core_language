@@ -1,5 +1,4 @@
 TODO:
-    Add reference variable support
-    Add check to regular variable assign for reference variable
-    ...
-    Add in Garbage collection
+    Add ref copy
+    Hook up functions
+    Add Garbage collection
