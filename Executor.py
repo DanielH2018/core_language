@@ -76,7 +76,7 @@ class Executor:
 				value = self.varGet(x)
 			self.variables[-1].append(temp)
 			
-		if not isInstance(int, value):
+		if not isinstance(int, value):
 			value = self.varGet(value)
 		return value
 	
@@ -105,7 +105,7 @@ class Executor:
 			self.globalVars[x] = value
 
 	# Called from Id Class when 'id = define id'
-	def refVarListLength(self, x)
+	def refVarListLength(self, x):
 		value = None
 		if not len(self.variables[-1]) == 0:
 			temp = self.variables[-1].pop()
