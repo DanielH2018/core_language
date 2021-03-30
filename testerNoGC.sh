@@ -4,7 +4,7 @@ runner=$1
 
 if test -f Main.py
 then
-	runner="python3.7 Main.py"
+	runner="python3 Main.py"
 elif test -f Main.java
 then
 	echo "Attempting to compile..."

@@ -76,7 +76,7 @@ class Executor:
 				value = self.varGet(x)
 			self.variables[-1].append(temp)
 			
-		if not isinstance(int, value):
+		if not isinstance(value, int):
 			value = self.varGet(value)
 		return value
 	
