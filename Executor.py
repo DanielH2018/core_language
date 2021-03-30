@@ -31,29 +31,53 @@ class Executor:
 		self.variables[-1].pop()
 
 	#Called from Id class to handle assigning variables
-	def varSet(self, x, value):
-		if not len(self.variables[-1]) == 0:
-			temp = self.variables[-1].pop()
-			if x in temp:
-					temp[x] = value
-			else:
-				self.varSet(x, value)
-			self.variables[-1].append(temp)
+	def varSet(self, x, inputValue):
+		index = -1
+		id = None
+		if(isinstance(x, dict)):
+			id = list(x.keys())[0]
+			index = x.get(id)
 		else:
-			self.globalVars[x] = value
+			id = x
 
-	#Called from Id class to handle fetching the value of a variable
-	def varGet(self, x):
 		value = None
 		if not len(self.variables[-1]) == 0:
 			temp = self.variables[-1].pop()
 			if x in temp:
-				value = temp[x]
+					if (isinstance(int, temp[id][index])):
+						temp[id][index] = inputValue
+					else:
+						value = temp[id][index]
+			else:
+				self.varSet(x, inputValue)
+			self.variables[-1].append(temp)
+		if value != None:
+			self.varSet(value, inputValue)
+
+	#Called from Id class to handle fetching the value of a variable
+	def varGet(self, x):
+		index = -1
+		id = None
+		if(isinstance(x, dict)):
+			id = list(x.keys())[0]
+			index = x.get(id)
+		else:
+			id = x
+
+		value = None
+		if not len(self.variables[-1]) == 0:
+			temp = self.variables[-1].pop()
+			if id in temp:
+				if(isinstance(x, dict)):
+					value = temp[id][index]
+				else:
+					value = temp[x]
 			else:
 				value = self.varGet(x)
 			self.variables[-1].append(temp)
-		else:
-			value = self.globalVars[x]
+			
+		if not isInstance(int, value):
+			value = self.varGet(value)
 		return value
 	
 	#Called from Id class to handle declaring a variable
@@ -64,46 +88,35 @@ class Executor:
 		else:
 			self.variables[-1][-1][x] = None
 	
+	# Called from Id class to declare a reference variable
 	def refVarInit(self, x):
 		self.variables[-1][-1][x] = [None]
 
-	# Called with 'new'
+	# Called from Id Class when 'id = new <expr>'
 	def refVarSet(self, x, value):
 		if not len(self.variables[-1]) == 0:
 			temp = self.variables[-1].pop()
 			if x in temp:
 					temp[x].append(value)
 			else:
-				self.varSet(x, value)
-			self.variables[-1].append(temp)
-		else:
-			self.globalVars[x] = value	
-
-	# Called with regular assign
-	def refVarUpdate(self, x, value, index):
-		if not len(self.variables[-1]) == 0:
-			temp = self.variables[-1].pop()
-			if x in temp:
-					temp[x][index] = value
-			else:
-				self.varSet(x, value)
+				self.refVarSet(x, value)
 			self.variables[-1].append(temp)
 		else:
 			self.globalVars[x] = value
 
-	def refVarGet(self, x, index):
+	# Called from Id Class when 'id = define id'
+	def refVarListLength(self, x)
 		value = None
 		if not len(self.variables[-1]) == 0:
 			temp = self.variables[-1].pop()
 			if x in temp:
-				value = else temp[x][index]
+				value = len(temp[x])
 			else:
-				value = self.varGet(x)
+				value = self.refVarListLength(x)
 			self.variables[-1].append(temp)
-		else:
-			value = self.globalVars[x]
+			
 		return value
-
+	
 	#
 	#
 	# These are the helper functions to handle funciton calls

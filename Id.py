@@ -43,17 +43,18 @@ class Id:
 			sys.exit()
 		return value
 
-	# Point self to reference variable
+	# Called from Assign class when 'id = define id'
+	def executeRefAssign(self, executor, x):
+		value = {x: executor.refVarListLength(x)}
+		executor.varSet(self.identifier, value)
+
+	# Called from NewDecl class
 	def executeRefInit(self, executor):
-		pass
+		executor.refVarInit(self.identifier)
 
-	# Initialize reference variable
-	def executeRefUpdate(self, executor):
-		pass
-
-	# Initialize reference variable
-	def executeRefSet(self, executor):
-		pass
+	# Called from Assign Class when 'id = new <expr>'
+	def executeRefSet(self, executor, value):
+		executor.refVarSet(self.identifier, value)
 
 	def getString(self):
 		return self.identifier

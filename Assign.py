@@ -41,8 +41,8 @@ class Assign:
 
 	def execute(self, executor):
 		if hasattr(self, 'assignId'):
-			self.id.executeRefAssign(self, executor)
+			self.id.executeRefAssign(executor, self.assignId.identifier)
 		elif hasattr(self, 'new'):
-			self.id.executeRefInit(self, executor)
+			self.id.executeRefSet(executor, self.expr.execute(executor))
 		else:
 			self.id.executeAssign(executor, self.expr.execute(executor))

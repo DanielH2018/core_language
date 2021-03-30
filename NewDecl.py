@@ -21,4 +21,4 @@ class NewDecl:
 		print(";\n", end='')
 
     def execute(self, executor):
-        self.id.execute(executor)
+        self.id.executeRefInit(executor)
