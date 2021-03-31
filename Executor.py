@@ -182,5 +182,8 @@ class Executor:
 	def popFrame(self, formals, arguments):
 		oldFrame = self.variables.pop()
 		for i in range(len(formals)):
-			self.varSet(arguments[i], oldFrame[-1][formals[i]])
+			if self.isRefVar(arguments[i]):
+				self.varSet(arguments[i], oldFrame[-1][formals[i]][-1])
+			else:
+				self.varSet(arguments[i], oldFrame[-1][formals[i]])
 			
