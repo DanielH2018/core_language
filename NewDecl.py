@@ -12,7 +12,8 @@ class NewDecl:
         parser.scanner.nextToken()
 
     def semantic(self, parser):
-        self.id.semantic(parser)
+        self.id.doublyDeclared(parser)
+        self.id.addToScope(parser)
 
     def print(self, indent):
         for x in range(indent):
