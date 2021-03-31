@@ -33,51 +33,51 @@ class Executor:
 	#Called from Id class to handle assigning variables
 	def varSet(self, x, inputValue):
 		index = -1
-		id = None
+		id = x
 		if(isinstance(x, dict)):
 			id = list(x.keys())[0]
 			index = x.get(id)
-		else:
-			id = x
 
 		value = None
 		if not len(self.variables[-1]) == 0:
 			temp = self.variables[-1].pop()
-			if x in temp:
-					if (isinstance(int, temp[id][index])):
-						temp[id][index] = inputValue
-					else:
-						value = temp[id][index]
+			if id in temp:
+				if (isinstance(temp[id], list)):
+					temp[id][index] = inputValue
+				else:
+					value = temp[id][index]
 			else:
 				self.varSet(x, inputValue)
 			self.variables[-1].append(temp)
+		else:
+			self.globalVars[x] = inputValue
 		if value != None:
 			self.varSet(value, inputValue)
 
 	#Called from Id class to handle fetching the value of a variable
 	def varGet(self, x):
 		index = -1
-		id = None
+		id = x
 		if(isinstance(x, dict)):
 			id = list(x.keys())[0]
 			index = x.get(id)
-		else:
-			id = x
 
 		value = None
 		if not len(self.variables[-1]) == 0:
 			temp = self.variables[-1].pop()
 			if id in temp:
-				if(isinstance(x, dict)):
+				if isinstance(temp[id], list):
 					value = temp[id][index]
 				else:
-					value = temp[x]
+					value = temp[id]
 			else:
 				value = self.varGet(x)
 			self.variables[-1].append(temp)
-			
+		else:
+			value = self.globalVars[id]
 		if not isinstance(value, int):
 			value = self.varGet(value)
+
 		return value
 	
 	#Called from Id class to handle declaring a variable
@@ -101,8 +101,6 @@ class Executor:
 			else:
 				self.refVarSet(x, value)
 			self.variables[-1].append(temp)
-		else:
-			self.globalVars[x] = value
 
 	# Called from Id Class when 'id = define id'
 	def refVarListLength(self, x):
@@ -115,7 +113,7 @@ class Executor:
 				value = self.refVarListLength(x)
 			self.variables[-1].append(temp)
 			
-		return value
+		return value - 1
 	
 	#
 	#
