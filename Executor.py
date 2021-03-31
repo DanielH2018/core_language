@@ -32,6 +32,8 @@ class Executor:
 
 	#Called from Id class to handle assigning variables
 	def varSet(self, x, inputValue):
+		#print("Vars: " + str(self.variables))
+		#print("Global Vars: " + str(self.globalVars))
 		index = -1
 		id = x
 		if(isinstance(x, dict)):
@@ -53,6 +55,8 @@ class Executor:
 			self.globalVars[x] = inputValue
 		if value != None:
 			self.varSet(value, inputValue)
+		
+
 
 	#Called from Id class to handle fetching the value of a variable
 	def varGet(self, x):
@@ -114,6 +118,23 @@ class Executor:
 			self.variables[-1].append(temp)
 			
 		return value - 1
+
+	def isRefVar(self, x):
+		isRefVar = None
+		if not len(self.variables[-1]) == 0:
+			temp = self.variables[-1].pop()
+			if x in temp:
+				if isinstance(temp[x], list):
+					isRefVar = True
+				else:
+					isRefVar = False
+			else:
+				isRefVar = self.isRefVar(x)
+			self.variables[-1].append(temp)
+		else:
+			isRefVar = False
+		return isRefVar
+
 	
 	#
 	#
@@ -151,7 +172,10 @@ class Executor:
 	def pushFrame(self, formals, arguments):
 		newFrame = [{}]
 		for i in range(len(formals)):
-			newFrame[-1][formals[i]] = self.varGet(arguments[i])
+			if self.isRefVar(arguments[i]):
+				newFrame[-1][formals[i]] = [self.varGet(arguments[i])]
+			else:
+				newFrame[-1][formals[i]] = self.varGet(arguments[i])
 		self.variables.append(newFrame)
 
 	#Called to pop a frame off the call stack and pass back parameters
@@ -159,3 +183,4 @@ class Executor:
 		oldFrame = self.variables.pop()
 		for i in range(len(formals)):
 			self.varSet(arguments[i], oldFrame[-1][formals[i]])
+			
