@@ -1,14 +1,16 @@
 program
-	add(a, b) begin
+	add(a, b, c) begin
 		a = new a+b;
 		define n;
 		b = define n;
 	endfunc
 begin
+	int z;
+	z = 10;
 	define x;
 	x = new 1;
 	define y;
 	y = new 1+x;
-	begin add(x, y);
+	begin add(x, y, z);
 	output x;
 end

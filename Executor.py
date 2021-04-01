@@ -10,7 +10,7 @@ class Executor:
 		self.variables = []
 		self.globalVars = {}
 		self.funcMap = {}
-	
+		self.gc = 0
 
 
 
@@ -36,6 +36,7 @@ class Executor:
 		#print("Global Vars: " + str(self.globalVars))
 		index = -1
 		id = x
+
 		if(isinstance(x, dict)):
 			id = list(x.keys())[0]
 			index = x.get(id)
@@ -45,9 +46,12 @@ class Executor:
 			temp = self.variables[-1].pop()
 			if id in temp:
 				if (isinstance(temp[id], list)):
-					temp[id][index] = inputValue
+					if isinstance(temp[id][index], dict):
+						value = temp[id][index]
+					else:
+						temp[id][index] = inputValue
 				else:
-					value = temp[id][index]
+					temp[id] = inputValue
 			else:
 				self.varSet(x, inputValue)
 			self.variables[-1].append(temp)
@@ -101,7 +105,12 @@ class Executor:
 		if not len(self.variables[-1]) == 0:
 			temp = self.variables[-1].pop()
 			if x in temp:
-					temp[x].append(value)
+					if len(temp[x]) == 1 and temp[x] == None:
+						temp[x][-1] = value
+					else:
+						temp[x].append(value)
+					self.gc = self.gc + 1
+					self.printGc()
 			else:
 				self.refVarSet(x, value)
 			self.variables[-1].append(temp)
@@ -135,6 +144,9 @@ class Executor:
 			isRefVar = False
 		return isRefVar
 
+
+	def printGc(self):
+		print("gc:" + str(self.gc))
 	
 	#
 	#
@@ -167,11 +179,15 @@ class Executor:
 	#Called to pop a frame off the call stack without parameter passing
 	def popMainFrame(self):
 		self.variables.pop()
+		if(self.gc != 0):
+			self.gc = 0
+			self.printGc()
 
 	#Called to push a new frame onto the call stack and pass parameters
 	def pushFrame(self, formals, arguments):
 		newFrame = [{}]
 		for i in range(len(formals)):
+			#print(str(arguments[i]))
 			if self.isRefVar(arguments[i]):
 				newFrame[-1][formals[i]] = [self.varGet(arguments[i])]
 			else:
@@ -184,6 +200,17 @@ class Executor:
 		for i in range(len(formals)):
 			if self.isRefVar(arguments[i]):
 				self.varSet(arguments[i], oldFrame[-1][formals[i]][-1])
+				self.garbageCollection(arguments[i])
+				#self.gc = self.gc - self.refVarListLength(oldFrame[-1][formals[i]])
 			else:
 				self.varSet(arguments[i], oldFrame[-1][formals[i]])
-			
+
+	def garbageCollection(self, x):
+
+		value = None
+		if not len(self.variables[-1]) == 0:
+			temp = self.variables[-1].pop()
+			print("DEBUG: " + str(temp))
+			for key in temp:
+				print("Key: " + str(key) + ", Value: " + str(temp.get(key)))
+			self.variables[-1].append(temp)
