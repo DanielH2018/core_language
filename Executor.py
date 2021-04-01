@@ -28,12 +28,19 @@ class Executor:
 
 	#Pop a nested scope off of the current frame
 	def popScope(self):
+		for varDict in self.variables[-1]:
+			if len(list(varDict.keys())) != 0:
+				key = list(varDict.keys())[0]
+				if isinstance(varDict.get(key), list):
+					if varDict.get(key)[-1] != None:
+						self.gc = self.gc - len(varDict.get(key))
+						self.printGc()
+						
+
 		self.variables[-1].pop()
 
 	#Called from Id class to handle assigning variables
 	def varSet(self, x, inputValue):
-		#print("Vars: " + str(self.variables))
-		#print("Global Vars: " + str(self.globalVars))
 		index = -1
 		id = x
 
@@ -83,7 +90,7 @@ class Executor:
 			self.variables[-1].append(temp)
 		else:
 			value = self.globalVars[id]
-		if not isinstance(value, int):
+		if isinstance(value, dict):
 			value = self.varGet(value)
 
 		return value
@@ -105,7 +112,7 @@ class Executor:
 		if not len(self.variables[-1]) == 0:
 			temp = self.variables[-1].pop()
 			if x in temp:
-					if len(temp[x]) == 1 and temp[x] == None:
+					if len(temp[x]) == 1 and temp[x][-1] == None:
 						temp[x][-1] = value
 					else:
 						temp[x].append(value)
@@ -187,7 +194,6 @@ class Executor:
 	def pushFrame(self, formals, arguments):
 		newFrame = [{}]
 		for i in range(len(formals)):
-			#print(str(arguments[i]))
 			if self.isRefVar(arguments[i]):
 				newFrame[-1][formals[i]] = [self.varGet(arguments[i])]
 			else:
@@ -199,18 +205,40 @@ class Executor:
 		oldFrame = self.variables.pop()
 		for i in range(len(formals)):
 			if self.isRefVar(arguments[i]):
+				if self.varGet(arguments[i]) != None and oldFrame[-1][formals[i]][-1] == None:
+					self.gc = self.gc - 1
+					self.printGc()
 				self.varSet(arguments[i], oldFrame[-1][formals[i]][-1])
-				self.garbageCollection(arguments[i])
-				#self.gc = self.gc - self.refVarListLength(oldFrame[-1][formals[i]])
+				length = len(oldFrame[-1][formals[i]])
+				if length != 1 and oldFrame[-1][formals[i]][-1] != None:
+					self.gc = self.gc - length + 1
+					self.printGc()
 			else:
 				self.varSet(arguments[i], oldFrame[-1][formals[i]])
+		for i in range(len(formals)):
+			if self.isRefVar(arguments[i]):
+				self.garbageCollection(arguments[i])
 
 	def garbageCollection(self, x):
-
 		value = None
 		if not len(self.variables[-1]) == 0:
 			temp = self.variables[-1].pop()
-			print("DEBUG: " + str(temp))
+			#print("DEBUG: " + str(temp))
 			for key in temp:
-				print("Key: " + str(key) + ", Value: " + str(temp.get(key)))
+				new = []
+				if isinstance(temp.get(key), list):
+					for key2 in temp:
+						if isinstance(temp.get(key2), list):
+							if(isinstance(temp.get(key2)[-1], dict)):
+								refKey = list(temp.get(key2)[-1].keys())[0]
+								if refKey == key:
+									new.append(temp.get(key2)[-1].get(refKey))
+									temp.get(key2)[-1].update({refKey: len(new)-1})
+					new.append(temp.get(key)[-1])
+					diff = len(temp.get(key)) - len(new)
+					if diff != 0:
+						print("gc")
+						self.gc = self.gc - diff
+						self.printGc()
+					temp.update({key: new})
 			self.variables[-1].append(temp)

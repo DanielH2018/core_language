@@ -45,7 +45,8 @@ class Id:
 
 	# Called from Assign class when 'id = define id'
 	def executeRefAssign(self, executor, x):
-		value = {x: executor.refVarListLength(x)}
+		isNone = (executor.varGet(x) == None)
+		value = None if isNone else {x: executor.refVarListLength(x)}
 		executor.varSet(self.identifier, value)
 
 	# Called from NewDecl class
